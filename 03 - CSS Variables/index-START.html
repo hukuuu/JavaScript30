@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Scoped CSS Variables and JS</title>
 </head>
+
 <body>
   <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
 
@@ -21,7 +23,17 @@
   <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
 
   <style>
+     :root {
+      --base: #ffc600;
+      --spacing: 10px;
+      --blur: 10px;
+    }
 
+    img {
+      padding: var(--spacing);
+      background: var(--base);
+      filter: blur(var(--blur));
+    }
     /*
       misc styles, nothing to do with CSS variables
     */
@@ -48,12 +60,29 @@
     }
 
     input {
-      width:100px;
+      width: 100px;
     }
   </style>
 
   <script>
+    var spacing = document.querySelector('input[name="spacing"]')
+    var blur = document.querySelector('input[name="blur"]')
+    var color = document.querySelector('input[name="base"]')
+
+    spacing.onchange =
+      spacing.onmousemove =
+      blur.onchange =
+      blur.onmousemove =
+      color.onchange =
+
+      function(e) {
+        document.documentElement.style.setProperty(
+          `--${e.target.name}`,
+          e.target.value + (e.target.dataset.sizing || '')
+        )
+      }
   </script>
 
 </body>
+
 </html>
