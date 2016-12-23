@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Type Ahead 👀</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <form class="search-form">
@@ -14,9 +16,50 @@
       <li>or a state</li>
     </ul>
   </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+  <script>
+    const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+    const full = city => `${city.city}, ${city.state}`
+    const commas = val => val.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    const ul = document.querySelector('ul.suggestions')
 
-</script>
-  </body>
+    let cities = []
+
+    fetch(endpoint)
+      .then(response => response.json())
+      .then(data => {
+        cities = cities.concat(data);
+        return data
+      })
+      .then(console.log)
+
+    document.querySelector('input.search').onkeyup = (e) => {
+      const val = e.target.value.toLowerCase()
+      const lis = cities
+        .filter(city => full(city).toLowerCase().indexOf(val) > -1)
+        .map(createListItem(val))
+
+      ul.innerHTML = lis.join('')
+
+    }
+
+    function createListItem(val) {
+      return function(city) {
+        const str = full(city)
+        const index = str.toLowerCase().indexOf(val)
+
+        const pre = str.substring(0, index)
+        const hl = str.substring(index, index + val.length)
+        const su = str.substring(index + val.length)
+
+        return `
+          <li>
+            <span class="name">${pre}<span class="hl">${hl}</span>${su}</span>
+            <span class="population">${commas(city.population)}</span>
+          </li>
+        `
+      }
+    }
+  </script>
+</body>
+
 </html>
